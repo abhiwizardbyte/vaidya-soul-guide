@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,22 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Ayurvedic theme colors
+				ayurveda: {
+					terracotta: '#c45d3c',
+					ochre: '#d9a566',
+					sage: '#7a8c73',
+					cream: '#f7f3e9',
+					brown: '#3c2415',
+					lightSage: '#c5cfbf',
+					paleOchre: '#f0e0c0',
 				}
+			},
+			fontFamily: {
+				sans: ['Inter', 'sans-serif'],
+				display: ['Philosopher', 'serif'],
+				sanskrit: ['Cormorant Garamond', 'serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -84,11 +100,24 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'gentle-fade': {
+					'0%': { opacity: '0' },
+					'100%': { opacity: '1' }
+				},
+				'gentle-pulse': {
+					'0%, 100%': { opacity: '1' },
+					'50%': { opacity: '0.7' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'gentle-fade': 'gentle-fade 1s ease-in',
+				'gentle-pulse': 'gentle-pulse 3s ease-in-out infinite'
+			},
+			backgroundImage: {
+				'ayurveda-pattern': "url('/src/assets/ayurveda-pattern.svg')"
 			}
 		}
 	},
