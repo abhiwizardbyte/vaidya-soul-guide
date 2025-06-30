@@ -6,6 +6,7 @@ import PatientQuestionnaire from '@/components/PatientQuestionnaire';
 import Header from '@/components/Header';
 import DoshaInfo from '@/components/DoshaInfo';
 import AyurvedicQuote from '@/components/AyurvedicQuote';
+import FallingLeaves from '@/components/FallingLeaves';
 import { generatePersonalizedResponse } from '@/utils/consultationService';
 
 const Index = () => {
@@ -39,14 +40,18 @@ const Index = () => {
   };
   
   return (
-    <div className="min-h-screen bg-ayurveda-cream bg-[url('/src/assets/ayurveda-pattern.svg')] bg-repeat animate-fade-in">
-      <div className="max-w-4xl mx-auto px-4 pb-16">
+    <div className="min-h-screen bg-ayurveda-cream bg-[url('/src/assets/ayurveda-pattern.svg')] bg-repeat animate-fade-in relative overflow-hidden">
+      <FallingLeaves />
+      
+      <div className="max-w-7xl mx-auto px-4 pb-16 relative z-10">
         <div className="animate-slide-in-right">
           <Header />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-          <div className={`space-y-6 ${consultationResponse && 'md:border-r md:pr-6 border-ayurveda-lightSage'}`}>
+        {/* Optimized layout for landscape viewing */}
+        <div className={`mt-8 ${consultationResponse ? 'grid grid-cols-1 xl:grid-cols-2 gap-8' : 'grid grid-cols-1 lg:grid-cols-3 gap-8'}`}>
+          {/* Main content area */}
+          <div className={`${consultationResponse ? 'xl:col-span-1' : 'lg:col-span-2'} space-y-6`}>
             <div className="ayurveda-card animate-scale-in">
               {!consultationResponse && !showQuestionnaire ? (
                 <div className="text-center">
@@ -118,7 +123,8 @@ const Index = () => {
             )}
           </div>
           
-          <div className={`space-y-6 ${showInfo ? 'block' : 'hidden md:block'}`}>
+          {/* Side content area */}
+          <div className={`${consultationResponse ? 'xl:col-span-1' : 'lg:col-span-1'} space-y-6 ${showInfo ? 'block' : 'hidden lg:block'}`}>
             <div className="animate-slide-in-right" style={{animationDelay: '200ms'}}>
               <DoshaInfo />
             </div>

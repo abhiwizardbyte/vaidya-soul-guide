@@ -128,6 +128,26 @@ export default {
 				'bounce-gentle': {
 					'0%, 100%': { transform: 'translateY(0)' },
 					'50%': { transform: 'translateY(-5px)' }
+				},
+				'leaf-fall': {
+					'0%': { 
+						transform: 'translateY(-100vh) translateX(0) rotate(0deg)',
+						opacity: '0'
+					},
+					'10%': {
+						opacity: '1'
+					},
+					'90%': {
+						opacity: '1'
+					},
+					'100%': { 
+						transform: 'translateY(100vh) translateX(100px) rotate(180deg)',
+						opacity: '0'
+					}
+				},
+				'sway': {
+					'0%, 100%': { transform: 'translateX(0)' },
+					'50%': { transform: 'translateX(20px)' }
 				}
 			},
 			animation: {
@@ -139,7 +159,9 @@ export default {
 				'scale-in': 'scale-in 0.5s ease-out',
 				'slide-in-right': 'slide-in-right 0.6s ease-out',
 				'slide-in-left': 'slide-in-left 0.6s ease-out',
-				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite'
+				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite',
+				'leaf-fall': 'leaf-fall linear infinite',
+				'sway': 'sway 3s ease-in-out infinite'
 			},
 			backgroundImage: {
 				'ayurveda-pattern': "url('/src/assets/ayurveda-pattern.svg')"
