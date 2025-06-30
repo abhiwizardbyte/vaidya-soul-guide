@@ -36,6 +36,8 @@ const PatientQuestionnaire: React.FC<PatientQuestionnaireProps> = ({ onSubmit })
     appetite: '',
   });
 
+  const [currentStep, setCurrentStep] = useState(0);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
@@ -45,237 +47,279 @@ const PatientQuestionnaire: React.FC<PatientQuestionnaireProps> = ({ onSubmit })
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-display text-ayurveda-terracotta text-center">
-          Health Assessment Questionnaire
-        </CardTitle>
-        <p className="text-center text-ayurveda-brown/80">
-          Help us understand your health to provide personalized Ayurvedic guidance
-        </p>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Basic Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-ayurveda-terracotta border-b border-ayurveda-sage/30 pb-2">
-              🔹 Basic Information
-            </h3>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="age">What is your age?</Label>
-                <Input
-                  id="age"
-                  type="number"
-                  placeholder="Enter your age"
-                  value={formData.age}
-                  onChange={(e) => updateField('age', e.target.value)}
-                  required
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <Label>What is your gender?</Label>
-                <RadioGroup
-                  value={formData.gender}
-                  onValueChange={(value) => updateField('gender', value)}
-                  required
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="male" id="male" />
-                    <Label htmlFor="male">Male</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="female" id="female" />
-                    <Label htmlFor="female">Female</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="other" id="other" />
-                    <Label htmlFor="other">Other</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            </div>
-          </div>
+  const nextStep = () => {
+    if (currentStep < 3) setCurrentStep(currentStep + 1);
+  };
 
-          {/* Primary Complaint */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-ayurveda-terracotta border-b border-ayurveda-sage/30 pb-2">
-              🔹 Primary Complaint
-            </h3>
-            
-            <div className="space-y-2">
-              <Label htmlFor="complaint">What health issue are you facing right now?</Label>
-              <Textarea
-                id="complaint"
-                placeholder="e.g., headache, acidity, fatigue, constipation, anxiety"
-                value={formData.primaryComplaint}
-                onChange={(e) => updateField('primaryComplaint', e.target.value)}
+  const prevStep = () => {
+    if (currentStep > 0) setCurrentStep(currentStep - 1);
+  };
+
+  const steps = [
+    {
+      title: "🔹 Basic Information",
+      content: (
+        <div className="space-y-6 animate-fade-in">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-3 animate-slide-in-right">
+              <Label htmlFor="age" className="text-lg font-medium">What is your age?</Label>
+              <Input
+                id="age"
+                type="number"
+                placeholder="Enter your age"
+                value={formData.age}
+                onChange={(e) => updateField('age', e.target.value)}
                 required
-                className="min-h-[100px]"
+                className="text-lg p-4 border-2 border-ayurveda-sage/30 focus:border-ayurveda-terracotta transition-all duration-300"
               />
             </div>
-          </div>
-
-          {/* Prakriti Assessment */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-ayurveda-terracotta border-b border-ayurveda-sage/30 pb-2">
-              🔹 Prakriti Assessment (Body Type)
-            </h3>
             
-            <div className="space-y-4">
-              <div>
-                <Label className="text-base font-medium">How would you describe your body frame?</Label>
-                <RadioGroup
-                  value={formData.bodyFrame}
-                  onValueChange={(value) => updateField('bodyFrame', value)}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="slim" id="slim" />
-                    <Label htmlFor="slim">Slim</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="medium" id="medium" />
-                    <Label htmlFor="medium">Medium</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="heavy" id="heavy" />
-                    <Label htmlFor="heavy">Heavy</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium">How is your digestion?</Label>
-                <RadioGroup
-                  value={formData.digestion}
-                  onValueChange={(value) => updateField('digestion', value)}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="irregular" id="irregular" />
-                    <Label htmlFor="irregular">Irregular</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="strong" id="strong" />
-                    <Label htmlFor="strong">Strong</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="slow" id="slow" />
-                    <Label htmlFor="slow">Slow</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium">How's your usual temperament?</Label>
-                <RadioGroup
-                  value={formData.temperament}
-                  onValueChange={(value) => updateField('temperament', value)}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="anxious" id="anxious" />
-                    <Label htmlFor="anxious">Anxious or restless</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="irritable" id="irritable" />
-                    <Label htmlFor="irritable">Irritable or intense</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="calm" id="calm" />
-                    <Label htmlFor="calm">Calm or laid-back</Label>
-                  </div>
-                </RadioGroup>
-              </div>
+            <div className="space-y-3 animate-slide-in-right" style={{animationDelay: '200ms'}}>
+              <Label className="text-lg font-medium">What is your gender?</Label>
+              <RadioGroup
+                value={formData.gender}
+                onValueChange={(value) => updateField('gender', value)}
+                required
+                className="space-y-3"
+              >
+                <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                  <RadioGroupItem value="male" id="male" className="border-ayurveda-sage" />
+                  <Label htmlFor="male" className="text-lg cursor-pointer">Male</Label>
+                </div>
+                <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                  <RadioGroupItem value="female" id="female" className="border-ayurveda-sage" />
+                  <Label htmlFor="female" className="text-lg cursor-pointer">Female</Label>
+                </div>
+                <div className="flex items-center space-x-3 p-3 rounded-lg hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                  <RadioGroupItem value="other" id="other" className="border-ayurveda-sage" />
+                  <Label htmlFor="other" className="text-lg cursor-pointer">Other</Label>
+                </div>
+              </RadioGroup>
             </div>
           </div>
-
-          {/* Lifestyle Indicators */}
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-ayurveda-terracotta border-b border-ayurveda-sage/30 pb-2">
-              🔹 Lifestyle Indicators
-            </h3>
-            
-            <div className="space-y-4">
-              <div>
-                <Label className="text-base font-medium">Do you sleep well at night?</Label>
-                <RadioGroup
-                  value={formData.sleep}
-                  onValueChange={(value) => updateField('sleep', value)}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="yes" id="sleep-yes" />
-                    <Label htmlFor="sleep-yes">Yes</Label>
+        </div>
+      )
+    },
+    {
+      title: "🔹 Primary Complaint",
+      content: (
+        <div className="space-y-6 animate-fade-in">
+          <div className="space-y-3">
+            <Label htmlFor="complaint" className="text-lg font-medium">What health issue are you facing right now?</Label>
+            <Textarea
+              id="complaint"
+              placeholder="e.g., headache, acidity, fatigue, constipation, anxiety"
+              value={formData.primaryComplaint}
+              onChange={(e) => updateField('primaryComplaint', e.target.value)}
+              required
+              className="min-h-[120px] text-lg p-4 border-2 border-ayurveda-sage/30 focus:border-ayurveda-terracotta transition-all duration-300 resize-none"
+            />
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "🔹 Prakriti Assessment (Body Type)",
+      content: (
+        <div className="space-y-8 animate-fade-in">
+          <div className="space-y-4">
+            <Label className="text-lg font-medium">How would you describe your body frame?</Label>
+            <RadioGroup
+              value={formData.bodyFrame}
+              onValueChange={(value) => updateField('bodyFrame', value)}
+              className="space-y-3"
+            >
+              {['slim', 'medium', 'heavy'].map((option, index) => (
+                <div key={option} className="animate-slide-in-right" style={{animationDelay: `${index * 100}ms`}}>
+                  <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-transparent hover:border-ayurveda-sage/30 hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                    <RadioGroupItem value={option} id={option} className="border-ayurveda-sage" />
+                    <Label htmlFor={option} className="text-lg cursor-pointer capitalize">{option}</Label>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="no" id="sleep-no" />
-                    <Label htmlFor="sleep-no">No</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="frequent-wake" id="frequent-wake" />
-                    <Label htmlFor="frequent-wake">I wake up frequently</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium">How are your bowel movements?</Label>
-                <RadioGroup
-                  value={formData.bowelMovements}
-                  onValueChange={(value) => updateField('bowelMovements', value)}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="regular" id="bowel-regular" />
-                    <Label htmlFor="bowel-regular">Regular</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="constipated" id="constipated" />
-                    <Label htmlFor="constipated">Constipated</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="loose" id="loose" />
-                    <Label htmlFor="loose">Loose or frequent</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-
-              <div>
-                <Label className="text-base font-medium">How is your appetite?</Label>
-                <RadioGroup
-                  value={formData.appetite}
-                  onValueChange={(value) => updateField('appetite', value)}
-                  className="mt-2"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="poor" id="appetite-poor" />
-                    <Label htmlFor="appetite-poor">Poor</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="strong" id="appetite-strong" />
-                    <Label htmlFor="appetite-strong">Strong</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="variable" id="appetite-variable" />
-                    <Label htmlFor="appetite-variable">Variable</Label>
-                  </div>
-                </RadioGroup>
-              </div>
-            </div>
+                </div>
+              ))}
+            </RadioGroup>
           </div>
 
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full bg-ayurveda-terracotta hover:bg-ayurveda-terracotta/80 text-white font-display text-lg"
-          >
-            Get Personalized Ayurvedic Guidance
-          </Button>
+          <div className="space-y-4">
+            <Label className="text-lg font-medium">How is your digestion?</Label>
+            <RadioGroup
+              value={formData.digestion}
+              onValueChange={(value) => updateField('digestion', value)}
+              className="space-y-3"
+            >
+              {['irregular', 'strong', 'slow'].map((option, index) => (
+                <div key={option} className="animate-slide-in-right" style={{animationDelay: `${(index + 3) * 100}ms`}}>
+                  <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-transparent hover:border-ayurveda-sage/30 hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                    <RadioGroupItem value={option} id={`digestion-${option}`} className="border-ayurveda-sage" />
+                    <Label htmlFor={`digestion-${option}`} className="text-lg cursor-pointer capitalize">{option}</Label>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-4">
+            <Label className="text-lg font-medium">How's your usual temperament?</Label>
+            <RadioGroup
+              value={formData.temperament}
+              onValueChange={(value) => updateField('temperament', value)}
+              className="space-y-3"
+            >
+              {[
+                { value: 'anxious', label: 'Anxious or restless' },
+                { value: 'irritable', label: 'Irritable or intense' },
+                { value: 'calm', label: 'Calm or laid-back' }
+              ].map((option, index) => (
+                <div key={option.value} className="animate-slide-in-right" style={{animationDelay: `${(index + 6) * 100}ms`}}>
+                  <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-transparent hover:border-ayurveda-sage/30 hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                    <RadioGroupItem value={option.value} id={`temperament-${option.value}`} className="border-ayurveda-sage" />
+                    <Label htmlFor={`temperament-${option.value}`} className="text-lg cursor-pointer">{option.label}</Label>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        </div>
+      )
+    },
+    {
+      title: "🔹 Lifestyle Indicators",
+      content: (
+        <div className="space-y-8 animate-fade-in">
+          <div className="space-y-4">
+            <Label className="text-lg font-medium">Do you sleep well at night?</Label>
+            <RadioGroup
+              value={formData.sleep}
+              onValueChange={(value) => updateField('sleep', value)}
+              className="space-y-3"
+            >
+              {[
+                { value: 'yes', label: 'Yes' },
+                { value: 'no', label: 'No' },
+                { value: 'frequent-wake', label: 'I wake up frequently' }
+              ].map((option, index) => (
+                <div key={option.value} className="animate-slide-in-right" style={{animationDelay: `${index * 100}ms`}}>
+                  <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-transparent hover:border-ayurveda-sage/30 hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                    <RadioGroupItem value={option.value} id={`sleep-${option.value}`} className="border-ayurveda-sage" />
+                    <Label htmlFor={`sleep-${option.value}`} className="text-lg cursor-pointer">{option.label}</Label>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-4">
+            <Label className="text-lg font-medium">How are your bowel movements?</Label>
+            <RadioGroup
+              value={formData.bowelMovements}
+              onValueChange={(value) => updateField('bowelMovements', value)}
+              className="space-y-3"
+            >
+              {[
+                { value: 'regular', label: 'Regular' },
+                { value: 'constipated', label: 'Constipated' },
+                { value: 'loose', label: 'Loose or frequent' }
+              ].map((option, index) => (
+                <div key={option.value} className="animate-slide-in-right" style={{animationDelay: `${(index + 3) * 100}ms`}}>
+                  <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-transparent hover:border-ayurveda-sage/30 hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                    <RadioGroupItem value={option.value} id={`bowel-${option.value}`} className="border-ayurveda-sage" />
+                    <Label htmlFor={`bowel-${option.value}`} className="text-lg cursor-pointer">{option.label}</Label>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          <div className="space-y-4">
+            <Label className="text-lg font-medium">How is your appetite?</Label>
+            <RadioGroup
+              value={formData.appetite}
+              onValueChange={(value) => updateField('appetite', value)}
+              className="space-y-3"
+            >
+              {[
+                { value: 'poor', label: 'Poor' },
+                { value: 'strong', label: 'Strong' },
+                { value: 'variable', label: 'Variable' }
+              ].map((option, index) => (
+                <div key={option.value} className="animate-slide-in-right" style={{animationDelay: `${(index + 6) * 100}ms`}}>
+                  <div className="flex items-center space-x-3 p-4 rounded-lg border-2 border-transparent hover:border-ayurveda-sage/30 hover:bg-ayurveda-lightSage/20 transition-all duration-300">
+                    <RadioGroupItem value={option.value} id={`appetite-${option.value}`} className="border-ayurveda-sage" />
+                    <Label htmlFor={`appetite-${option.value}`} className="text-lg cursor-pointer">{option.label}</Label>
+                  </div>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+        </div>
+      )
+    }
+  ];
+
+  return (
+    <Card className="w-full max-w-3xl mx-auto animate-scale-in bg-white/95 shadow-xl border-2 border-ayurveda-sage/20">
+      <CardHeader className="text-center bg-gradient-to-r from-ayurveda-terracotta/10 to-ayurveda-ochre/10">
+        <CardTitle className="text-3xl font-display text-ayurveda-terracotta animate-gentle-pulse">
+          Health Assessment Questionnaire
+        </CardTitle>
+        <p className="text-ayurveda-brown/80 text-lg">
+          Help us understand your health to provide personalized Ayurvedic guidance
+        </p>
+        <div className="flex justify-center mt-4">
+          <div className="flex space-x-2">
+            {steps.map((_, index) => (
+              <div
+                key={index}
+                className={`w-3 h-3 rounded-full transition-all duration-500 ${
+                  index <= currentStep 
+                    ? 'bg-ayurveda-terracotta animate-pulse' 
+                    : 'bg-ayurveda-sage/30'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="p-8">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="min-h-[400px]">
+            <h3 className="text-2xl font-semibold text-ayurveda-terracotta border-b-2 border-ayurveda-sage/30 pb-3 mb-6 animate-slide-in-right">
+              {steps[currentStep].title}
+            </h3>
+            {steps[currentStep].content}
+          </div>
+
+          <div className="flex justify-between pt-6 border-t-2 border-ayurveda-sage/20">
+            {currentStep > 0 && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={prevStep}
+                className="border-ayurveda-sage text-ayurveda-sage hover:bg-ayurveda-sage hover:text-white transition-all duration-300 transform hover:scale-105"
+              >
+                Previous
+              </Button>
+            )}
+            
+            <div className="ml-auto">
+              {currentStep < steps.length - 1 ? (
+                <Button
+                  type="button"
+                  onClick={nextStep}
+                  className="bg-ayurveda-terracotta hover:bg-ayurveda-terracotta/80 text-white transition-all duration-300 transform hover:scale-105"
+                >
+                  Next
+                </Button>
+              ) : (
+                <Button
+                  type="submit"
+                  className="bg-gradient-to-r from-ayurveda-terracotta to-ayurveda-ochre hover:from-ayurveda-terracotta/80 hover:to-ayurveda-ochre/80 text-white font-display text-lg px-8 py-3 transition-all duration-300 transform hover:scale-105 animate-gentle-pulse"
+                >
+                  Get Your Ayurvedic Guidance ✨
+                </Button>
+              )}
+            </div>
+          </div>
         </form>
       </CardContent>
     </Card>
