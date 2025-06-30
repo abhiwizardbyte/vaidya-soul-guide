@@ -40,6 +40,16 @@ const PatientQuestionnaire: React.FC<PatientQuestionnaireProps> = ({ onSubmit })
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate that all required fields are filled
+    const requiredFields = Object.values(formData);
+    const isFormComplete = requiredFields.every(field => field.trim() !== '');
+    
+    if (!isFormComplete) {
+      alert('Please complete all questions before submitting.');
+      return;
+    }
+    
     onSubmit(formData);
   };
 
@@ -47,8 +57,25 @@ const PatientQuestionnaire: React.FC<PatientQuestionnaireProps> = ({ onSubmit })
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const canProceedToNext = () => {
+    switch (currentStep) {
+      case 0:
+        return formData.age && formData.gender;
+      case 1:
+        return formData.primaryComplaint.trim() !== '';
+      case 2:
+        return formData.bodyFrame && formData.digestion && formData.temperament;
+      case 3:
+        return formData.sleep && formData.bowelMovements && formData.appetite;
+      default:
+        return false;
+    }
+  };
+
   const nextStep = () => {
-    if (currentStep < 3) setCurrentStep(currentStep + 1);
+    if (canProceedToNext() && currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+    }
   };
 
   const prevStep = () => {
@@ -306,14 +333,16 @@ const PatientQuestionnaire: React.FC<PatientQuestionnaireProps> = ({ onSubmit })
                 <Button
                   type="button"
                   onClick={nextStep}
-                  className="bg-ayurveda-terracotta hover:bg-ayurveda-terracotta/80 text-white transition-all duration-300 transform hover:scale-105"
+                  disabled={!canProceedToNext()}
+                  className="bg-ayurveda-terracotta hover:bg-ayurveda-terracotta/80 text-white transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   Next
                 </Button>
               ) : (
                 <Button
                   type="submit"
-                  className="bg-gradient-to-r from-ayurveda-terracotta to-ayurveda-ochre hover:from-ayurveda-terracotta/80 hover:to-ayurveda-ochre/80 text-white font-display text-lg px-8 py-3 transition-all duration-300 transform hover:scale-105 animate-gentle-pulse"
+                  disabled={!canProceedToNext()}
+                  className="bg-gradient-to-r from-ayurveda-terracotta to-ayurveda-ochre hover:from-ayurveda-terracotta/80 hover:to-ayurveda-ochre/80 text-white font-display text-lg px-8 py-3 transition-all duration-300 transform hover:scale-105 animate-gentle-pulse disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   Get Your Ayurvedic Guidance ✨
                 </Button>

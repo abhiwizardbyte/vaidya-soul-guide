@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import ConsultationResponse from '@/components/ConsultationResponse';
@@ -14,18 +13,31 @@ const Index = () => {
   const [isConsulting, setIsConsulting] = useState(false);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [showInfo, setShowInfo] = useState(true);
+  const [loadingPhase, setLoadingPhase] = useState(0);
   
   const handleQuestionnaireSubmit = async (questionnaireData: any) => {
     setIsConsulting(true);
     setShowInfo(false);
+    setLoadingPhase(0);
     
-    // Generate personalized response with a realistic delay
-    setTimeout(() => {
-      const response = generatePersonalizedResponse(questionnaireData);
-      setConsultationResponse(response);
-      setIsConsulting(false);
-      setShowQuestionnaire(false);
-    }, 3000);
+    // Multi-phase loading with realistic delays
+    const loadingPhases = [
+      { message: "Analyzing your health profile...", duration: 2000 },
+      { message: "Determining dosha imbalances...", duration: 2500 },
+      { message: "Consulting ancient Ayurvedic texts...", duration: 2000 },
+      { message: "Preparing personalized recommendations...", duration: 1500 }
+    ];
+    
+    for (let i = 0; i < loadingPhases.length; i++) {
+      setLoadingPhase(i);
+      await new Promise(resolve => setTimeout(resolve, loadingPhases[i].duration));
+    }
+    
+    // Generate the final response
+    const response = generatePersonalizedResponse(questionnaireData);
+    setConsultationResponse(response);
+    setIsConsulting(false);
+    setShowQuestionnaire(false);
   };
 
   const handleStartConsultation = () => {
@@ -38,6 +50,13 @@ const Index = () => {
     setShowQuestionnaire(false);
     setShowInfo(true);
   };
+  
+  const loadingMessages = [
+    "Analyzing your health profile...",
+    "Determining dosha imbalances...", 
+    "Consulting ancient Ayurvedic texts...",
+    "Preparing personalized recommendations..."
+  ];
   
   return (
     <div className="min-h-screen bg-ayurveda-cream bg-[url('/src/assets/ayurveda-pattern.svg')] bg-repeat animate-fade-in relative overflow-hidden">
@@ -101,19 +120,34 @@ const Index = () => {
             {isConsulting && (
               <div className="ayurveda-card text-center animate-scale-in">
                 <div className="flex flex-col items-center justify-center py-12">
-                  <div className="relative mb-6">
-                    <div className="w-20 h-20 border-4 border-t-ayurveda-terracotta border-ayurveda-ochre/30 rounded-full animate-spin"></div>
+                  {/* Enhanced loading animation */}
+                  <div className="relative mb-8">
+                    <div className="w-24 h-24 border-4 border-t-ayurveda-terracotta border-ayurveda-ochre/30 rounded-full animate-spin"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-16 h-16 border-4 border-r-ayurveda-sage border-transparent rounded-full animate-spin" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
+                    </div>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className="text-2xl animate-pulse">🌿</span>
                     </div>
                   </div>
-                  <h3 className="text-ayurveda-brown font-display text-xl mb-2 animate-gentle-pulse">
-                    Analyzing Your Health Profile
+                  
+                  <h3 className="text-ayurveda-brown font-display text-xl mb-3 animate-gentle-pulse">
+                    {loadingMessages[loadingPhase]}
                   </h3>
-                  <p className="text-sm text-ayurveda-brown/70 animate-gentle-fade">
+                  
+                  <p className="text-sm text-ayurveda-brown/70 animate-gentle-fade mb-6">
                     Our Ayurvedic AI is preparing personalized guidance for your wellness journey
                   </p>
-                  <div className="mt-4 flex space-x-1">
+                  
+                  {/* Progress indicator */}
+                  <div className="w-64 h-2 bg-ayurveda-sage/20 rounded-full overflow-hidden mb-4">
+                    <div 
+                      className="h-full bg-gradient-to-r from-ayurveda-terracotta to-ayurveda-ochre transition-all duration-1000"
+                      style={{width: `${((loadingPhase + 1) / 4) * 100}%`}}
+                    ></div>
+                  </div>
+                  
+                  <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-ayurveda-terracotta rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
                     <div className="w-2 h-2 bg-ayurveda-ochre rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
                     <div className="w-2 h-2 bg-ayurveda-sage rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
